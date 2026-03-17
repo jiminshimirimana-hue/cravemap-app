@@ -1061,7 +1061,7 @@ function App() {
               <Sparkles className="h-4 w-4" /> Discover restaurants by mood
             </div>
             <h1 className="text-4xl font-bold tracking-tight text-slate-900 md:text-5xl lg:text-6xl">
-              Find your next <span className="bg-gradient-to-r from-orange-500 to-pink-600 bg-clip-text text-transparent">craving</span> on the map.
+              Find your next <span className="bg-gradient-to-r from-orange-500 to-pink-600 bg-clip-text text-transparent">bite</span> by mood.
             </h1>
             <p className="mt-4 text-lg text-slate-600 md:text-xl">
               Tell us your mood, occasion & cuisine preference. We'll find the best nearby restaurants and inspire you with matching recipes.
