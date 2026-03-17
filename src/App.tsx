@@ -1026,7 +1026,7 @@ function App() {
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-pink-600">
               <Utensils className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold tracking-tight">CraveMap</span>
+            <span className="text-xl font-bold tracking-tight">MoodBite</span>
           </div>
           <div className="hidden items-center gap-1 sm:flex">
             <Button variant="ghost" size="sm" className="rounded-full text-slate-600" onClick={() => scrollToSection("search")}>
@@ -1405,7 +1405,7 @@ function App() {
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-pink-600">
               <Utensils className="h-4 w-4 text-white" />
             </div>
-            <span className="font-semibold">CraveMap</span>
+            <span className="font-semibold">MoodBite</span>
           </div>
           <p className="text-sm text-slate-400">Discover restaurants, get inspired, share reviews.</p>
         </div>

@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.cravemap.app',
-  appName: 'CraveMap',
+  appId: 'com.moodbite.app',
+  appName: 'MoodBite',
   webDir: 'dist'
 };
 
