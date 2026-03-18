@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, MapPin, Search, Sparkles, ChefHat, LocateFixed, Heart, Clock3, Phone, ExternalLink, AlertCircle, Users, MessageSquare, Plus, Trash2, Star, Send, Utensils, Navigation, BookOpen, MapPinned, ScrollText } from "lucide-react";
+import { Loader2, MapPin, Search, Sparkles, ChefHat, LocateFixed, Heart, Clock3, Phone, ExternalLink, AlertCircle, Users, MessageSquare, Plus, Trash2, Star, Send, Utensils, Navigation, BookOpen, MapPinned, ScrollText, Home, Compass } from "lucide-react";
 import './App.css'
 
 const MEALDB_KEY = (typeof import.meta !== "undefined" && import.meta.env?.VITE_MEALDB_KEY) || "1";
@@ -51,10 +51,8 @@ interface Restaurant {
 }
 
 function getGoogleMapsUrl(restaurant: Restaurant): string {
-  if (restaurant.lat && restaurant.lon) {
-    return `https://www.google.com/maps/search/?api=1&query=${restaurant.lat},${restaurant.lon}&query_place_id=${encodeURIComponent(restaurant.name)}`;
-  }
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.name + (restaurant.address ? " " + restaurant.address : ""))}`;
+  const nameAndAddress = restaurant.name + (restaurant.address ? ", " + restaurant.address : "");
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(nameAndAddress)}`;
 }
 
 function getMenuSearchUrl(restaurant: Restaurant): string {
@@ -875,6 +873,7 @@ function App() {
   const [error, setError] = useState("");
   const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
   const [commentRefreshKey, setCommentRefreshKey] = useState(0);
+  const [activeTab, setActiveTab] = useState("home");
   void commentRefreshKey;
 
   const isGroupMode = groupMembers.length > 0;
@@ -1018,52 +1017,52 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Sticky Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-slate-100 bg-white/80 backdrop-blur-lg">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-8">
+    <div className="min-h-screen bg-white content-with-bottom-nav">
+      {/* Sticky Navigation - with safe area top padding */}
+      <nav className="safe-top sticky top-0 z-50 border-b border-slate-100 bg-white/80 backdrop-blur-lg">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2.5 md:px-8 md:py-3">
           <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-pink-600">
-              <Utensils className="h-5 w-5 text-white" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-pink-600 md:h-9 md:w-9">
+              <Utensils className="h-4 w-4 text-white md:h-5 md:w-5" />
             </div>
-            <span className="text-xl font-bold tracking-tight">MoodBite</span>
+            <span className="text-lg font-bold tracking-tight md:text-xl">MoodBite</span>
           </div>
-          <div className="hidden items-center gap-1 sm:flex">
-            <Button variant="ghost" size="sm" className="rounded-full text-slate-600" onClick={() => scrollToSection("search")}>
+          <div className="hidden items-center gap-1 md:flex">
+            <Button variant="ghost" size="sm" className="rounded-full text-slate-600" onClick={() => { setActiveTab("home"); scrollToSection("search"); }}>
               <Search className="mr-1.5 h-4 w-4" /> Search
             </Button>
-            <Button variant="ghost" size="sm" className="rounded-full text-slate-600" onClick={() => scrollToSection("restaurants")}>
+            <Button variant="ghost" size="sm" className="rounded-full text-slate-600" onClick={() => { setActiveTab("restaurants"); scrollToSection("restaurants"); }}>
               <Navigation className="mr-1.5 h-4 w-4" /> Restaurants
             </Button>
-            <Button variant="ghost" size="sm" className="rounded-full text-slate-600" onClick={() => scrollToSection("recipes")}>
+            <Button variant="ghost" size="sm" className="rounded-full text-slate-600" onClick={() => { setActiveTab("recipes"); scrollToSection("recipes"); }}>
               <BookOpen className="mr-1.5 h-4 w-4" /> Recipes
             </Button>
             {selectedRestaurant && (
-              <Button variant="ghost" size="sm" className="rounded-full text-slate-600" onClick={() => scrollToSection("reviews")}>
+              <Button variant="ghost" size="sm" className="rounded-full text-slate-600" onClick={() => { setActiveTab("reviews"); scrollToSection("reviews"); }}>
                 <MessageSquare className="mr-1.5 h-4 w-4" /> Reviews
               </Button>
             )}
           </div>
-          <Button variant="outline" size="sm" className="rounded-full" onClick={useCurrentLocation} disabled={locationLoading}>
-            {locationLoading ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <LocateFixed className="mr-1.5 h-4 w-4" />}
+          <Button variant="outline" size="sm" className="h-8 rounded-full px-3 text-xs md:h-9 md:px-4 md:text-sm" onClick={useCurrentLocation} disabled={locationLoading}>
+            {locationLoading ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin md:mr-1.5 md:h-4 md:w-4" /> : <LocateFixed className="mr-1 h-3.5 w-3.5 md:mr-1.5 md:h-4 md:w-4" />}
             <span className="hidden sm:inline">{locationLabel}</span>
             <span className="sm:hidden">Locate</span>
           </Button>
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section - compact on mobile */}
       <section className="relative overflow-hidden bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
         <div className="absolute inset-0 opacity-30" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, rgba(251, 146, 60, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.12) 0%, transparent 50%)" }} />
-        <div className="relative mx-auto max-w-7xl px-4 py-12 md:px-8 md:py-16">
+        <div className="relative mx-auto max-w-7xl px-4 py-6 md:px-8 md:py-16">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="max-w-2xl">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-1.5 text-sm font-medium text-orange-700 shadow-sm backdrop-blur">
-              <Sparkles className="h-4 w-4" /> Discover restaurants by mood
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1 text-xs font-medium text-orange-700 shadow-sm backdrop-blur md:mb-4 md:px-4 md:py-1.5 md:text-sm">
+              <Sparkles className="h-3.5 w-3.5 md:h-4 md:w-4" /> Discover restaurants by mood
             </div>
-            <h1 className="text-4xl font-bold tracking-tight text-slate-900 md:text-5xl lg:text-6xl">
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 md:text-5xl lg:text-6xl">
               Find your next <span className="bg-gradient-to-r from-orange-500 to-pink-600 bg-clip-text text-transparent">bite</span> by mood.
             </h1>
-            <p className="mt-4 text-lg text-slate-600 md:text-xl">
+            <p className="mt-2 text-sm text-slate-600 md:mt-4 md:text-xl">
               Tell us your mood, occasion & cuisine preference. We'll find the best nearby restaurants and inspire you with matching recipes.
             </p>
           </motion.div>
@@ -1072,10 +1071,10 @@ function App() {
 
       {/* Search Filters Section */}
       <section id="search" className="border-b border-slate-100 bg-slate-50/50">
-        <div className="mx-auto max-w-7xl px-4 py-8 md:px-8">
+        <div className="mx-auto max-w-7xl px-4 py-4 md:px-8 md:py-8">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.1 }}>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="space-y-1.5">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+              <div className="space-y-1">
                 <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">Mood</label>
                 <Select value={selectedMood} onValueChange={setSelectedMood}>
                   <SelectTrigger className="rounded-xl border-slate-200 bg-white shadow-sm">
@@ -1088,7 +1087,7 @@ function App() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">Occasion</label>
                 <Select value={selectedOccasion} onValueChange={setSelectedOccasion}>
                   <SelectTrigger className="rounded-xl border-slate-200 bg-white shadow-sm">
@@ -1101,7 +1100,7 @@ function App() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">Cuisine</label>
                 <Select value={selectedCuisine} onValueChange={setSelectedCuisine}>
                   <SelectTrigger className="rounded-xl border-slate-200 bg-white shadow-sm">
@@ -1114,7 +1113,7 @@ function App() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">Keyword</label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -1123,25 +1122,24 @@ function App() {
               </div>
             </div>
 
-            <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-end">
-              <div className="flex-1 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                <div className="mb-2 flex items-center justify-between">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">Search radius</label>
-                  <span className="text-sm font-semibold text-orange-600">{distance[0]} mi</span>
-                </div>
-                <Slider value={distance} onValueChange={setDistance} min={1} max={15} step={1} />
+            <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm md:mt-4 md:p-4">
+              <div className="mb-2 flex items-center justify-between">
+                <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">Search radius</label>
+                <span className="text-sm font-semibold text-orange-600">{distance[0]} mi</span>
               </div>
-              <div className="flex flex-wrap gap-2">
-                <Input value={locationInput} onChange={(event) => setLocationInput(event.target.value)} placeholder="City or address" className="w-48 rounded-xl border-slate-200 bg-white shadow-sm" onKeyDown={(e) => e.key === "Enter" && applyTypedLocation()} />
-                <Button onClick={applyTypedLocation} className="rounded-xl bg-gradient-to-r from-orange-500 to-pink-600 shadow-sm hover:from-orange-600 hover:to-pink-700" disabled={locationLoading}>
-                  {locationLoading ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Search className="mr-1.5 h-4 w-4" />}
-                  Search
-                </Button>
-                <Button onClick={() => searchRestaurants(coords)} variant="outline" className="rounded-xl shadow-sm" disabled={loadingRestaurants}>
-                  {loadingRestaurants ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : null}
-                  Refresh
-                </Button>
-              </div>
+              <Slider value={distance} onValueChange={setDistance} min={1} max={15} step={1} />
+            </div>
+
+            <div className="mt-3 flex gap-2 md:mt-4">
+              <Input value={locationInput} onChange={(event) => setLocationInput(event.target.value)} placeholder="City or address" className="flex-1 rounded-xl border-slate-200 bg-white shadow-sm md:flex-none md:w-48" onKeyDown={(e) => e.key === "Enter" && applyTypedLocation()} />
+              <Button onClick={applyTypedLocation} className="shrink-0 rounded-xl bg-gradient-to-r from-orange-500 to-pink-600 shadow-sm hover:from-orange-600 hover:to-pink-700" disabled={locationLoading}>
+                {locationLoading ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <Search className="mr-1.5 h-4 w-4" />}
+                <span className="hidden md:inline">Search</span>
+              </Button>
+              <Button onClick={() => searchRestaurants(coords)} variant="outline" className="shrink-0 rounded-xl shadow-sm" disabled={loadingRestaurants}>
+                {loadingRestaurants ? <Loader2 className="h-4 w-4 animate-spin" /> : <Compass className="h-4 w-4" />}
+                <span className="ml-1.5 hidden md:inline">Refresh</span>
+              </Button>
             </div>
 
             {isGroupMode && (
@@ -1240,15 +1238,15 @@ function App() {
       )}
 
       {/* Main Content */}
-      <main className="mx-auto max-w-7xl px-4 py-8 md:px-8">
-        <div className="grid gap-8 lg:grid-cols-[1fr_1fr]">
+      <main className="mx-auto max-w-7xl px-3 py-4 md:px-8 md:py-8">
+        <div className="grid gap-6 md:gap-8 lg:grid-cols-[1fr_1fr]">
 
           {/* Restaurant Results */}
           <section id="restaurants" className="section-fade-in">
-            <div className="mb-5 flex items-center justify-between">
+            <div className="mb-3 flex items-center justify-between md:mb-5">
               <div>
-                <h2 className="text-2xl font-bold tracking-tight">Nearby Restaurants</h2>
-                <p className="mt-1 text-sm text-slate-500">{rankedRestaurants.length} results near {locationLabel}</p>
+                <h2 className="text-xl font-bold tracking-tight md:text-2xl">Nearby Restaurants</h2>
+                <p className="mt-0.5 text-xs text-slate-500 md:mt-1 md:text-sm">{rankedRestaurants.length} results near {locationLabel}</p>
               </div>
             </div>
             <div className="space-y-3">
@@ -1260,9 +1258,9 @@ function App() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.02 }}
                     onClick={() => setSelectedRestaurant(restaurant)}
-                    className={`restaurant-card-hover cursor-pointer rounded-2xl border-2 p-4 transition-all ${selectedRestaurant?.id === restaurant.id ? "border-orange-500 bg-orange-50/50 shadow-md" : "border-slate-100 bg-white hover:border-slate-200"}`}
+                    className={`restaurant-card-hover cursor-pointer rounded-2xl border-2 p-3 transition-all md:p-4 ${selectedRestaurant?.id === restaurant.id ? "border-orange-500 bg-orange-50/50 shadow-md" : "border-slate-100 bg-white hover:border-slate-200"}`}
                   >
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start gap-2.5 md:gap-3">
                       {(() => {
                         const logoUrl = getRestaurantLogoUrl(restaurant);
                         return logoUrl ? (
@@ -1274,25 +1272,28 @@ function App() {
                         );
                       })()}
                       <div className="min-w-0 flex-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="text-base font-semibold">{restaurant.name}</h3>
-                          <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-pink-600 px-2 text-xs font-bold text-white">{restaurant.matchScore}</span>
+                        <div className="flex flex-wrap items-center gap-1.5 md:gap-2">
+                          <h3 className="text-sm font-semibold md:text-base">{restaurant.name}</h3>
+                          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-pink-600 px-1.5 text-[10px] font-bold text-white md:h-6 md:min-w-6 md:px-2 md:text-xs">{restaurant.matchScore}</span>
                         </div>
-                        <p className="mt-1 text-sm text-slate-500">{restaurant.categories?.map((c) => c.name).slice(0, 3).join(" \u2022 ") || "Restaurant"}</p>
-                        <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-slate-400">
-                          <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {restaurant.distanceMiles} mi</span>
-                          {restaurant.rating && <span className="inline-flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" /> {restaurant.rating}</span>}
+                        <p className="mt-0.5 text-xs text-slate-500 md:mt-1 md:text-sm">{restaurant.categories?.map((c) => c.name).slice(0, 3).join(" \u2022 ") || "Restaurant"}</p>
+                        <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-slate-400 md:mt-2 md:gap-3">
+                          <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3 md:h-3.5 md:w-3.5" /> {restaurant.distanceMiles} mi</span>
+                          {restaurant.rating && <span className="inline-flex items-center gap-1"><Star className="h-3 w-3 fill-amber-400 text-amber-400 md:h-3.5 md:w-3.5" /> {restaurant.rating}</span>}
                         </div>
                         <div className="mt-2 flex flex-wrap gap-1.5">
-                          <Button asChild variant="outline" size="sm" className="h-7 rounded-lg text-xs" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+                          <Button asChild variant="outline" size="sm" className="h-7 rounded-lg px-2 text-xs" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
                             <a href={getGoogleMapsUrl(restaurant)} target="_blank" rel="noreferrer"><MapPinned className="mr-1 h-3 w-3" /> Directions</a>
                           </Button>
-                          <Button asChild variant="outline" size="sm" className="h-7 rounded-lg text-xs" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+                          <Button asChild variant="outline" size="sm" className="h-7 rounded-lg px-2 text-xs" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
                             <a href={getMenuSearchUrl(restaurant)} target="_blank" rel="noreferrer"><ScrollText className="mr-1 h-3 w-3" /> Menu</a>
+                          </Button>
+                          <Button size="sm" className="h-7 rounded-lg bg-gradient-to-r from-orange-500 to-pink-600 px-2 text-xs hover:from-orange-600 hover:to-pink-700 md:hidden" onClick={(e) => { e.stopPropagation(); setSelectedRestaurant(restaurant); setActiveTab("recipes"); scrollToSection("recipes"); }}>
+                            <ChefHat className="mr-1 h-3 w-3" /> Recipes
                           </Button>
                         </div>
                       </div>
-                      <div className="flex shrink-0 flex-col gap-1.5">
+                      <div className="hidden shrink-0 flex-col gap-1.5 md:flex">
                         <Button size="sm" className="h-8 rounded-lg bg-gradient-to-r from-orange-500 to-pink-600 text-xs hover:from-orange-600 hover:to-pink-700" onClick={(e) => { e.stopPropagation(); setSelectedRestaurant(restaurant); scrollToSection("recipes"); }}>
                           Recipes
                         </Button>
@@ -1312,9 +1313,9 @@ function App() {
 
           {/* Recipes Section */}
           <section id="recipes" className="section-fade-in">
-            <div className="mb-5">
-              <h2 className="text-2xl font-bold tracking-tight">Recipe Inspiration</h2>
-              <p className="mt-1 text-sm text-slate-500">Dishes inspired by your selected restaurant</p>
+            <div className="mb-3 md:mb-5">
+              <h2 className="text-xl font-bold tracking-tight md:text-2xl">Recipe Inspiration</h2>
+              <p className="mt-0.5 text-xs text-slate-500 md:mt-1 md:text-sm">Dishes inspired by your selected restaurant</p>
             </div>
             {selectedRestaurant ? (
               <div className="space-y-4">
@@ -1382,7 +1383,7 @@ function App() {
         </div>
 
         {/* Group Mode */}
-        <div className="mt-8">
+        <div id="group" className="mt-6 md:mt-8">
           <GroupModePanel onGroupScore={(members) => { setGroupMembers(members); setCommentRefreshKey((k) => k + 1); }} />
         </div>
 
@@ -1398,8 +1399,8 @@ function App() {
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-slate-100 bg-slate-50">
+      {/* Footer - hidden on mobile since bottom nav is there */}
+      <footer className="hidden border-t border-slate-100 bg-slate-50 md:block">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-8 sm:flex-row md:px-8">
           <div className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-pink-600">
@@ -1410,6 +1411,32 @@ function App() {
           <p className="text-sm text-slate-400">Discover restaurants, get inspired, share reviews.</p>
         </div>
       </footer>
+
+      {/* Mobile Bottom Tab Bar - iOS style */}
+      <div className="bottom-tab-bar md:hidden">
+        <div className="flex">
+          <button className={`bottom-tab-item ${activeTab === "home" ? "active" : ""}`} onClick={() => { setActiveTab("home"); scrollToSection("search"); }}>
+            <Home />
+            <span>Home</span>
+          </button>
+          <button className={`bottom-tab-item ${activeTab === "restaurants" ? "active" : ""}`} onClick={() => { setActiveTab("restaurants"); scrollToSection("restaurants"); }}>
+            <Navigation />
+            <span>Explore</span>
+          </button>
+          <button className={`bottom-tab-item ${activeTab === "recipes" ? "active" : ""}`} onClick={() => { setActiveTab("recipes"); scrollToSection("recipes"); }}>
+            <BookOpen />
+            <span>Recipes</span>
+          </button>
+          <button className={`bottom-tab-item ${activeTab === "reviews" ? "active" : ""}`} onClick={() => { setActiveTab("reviews"); if (selectedRestaurant) scrollToSection("reviews"); }}>
+            <MessageSquare />
+            <span>Reviews</span>
+          </button>
+          <button className={`bottom-tab-item ${activeTab === "group" ? "active" : ""}`} onClick={() => { setActiveTab("group"); scrollToSection("group"); }}>
+            <Users />
+            <span>Group</span>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
